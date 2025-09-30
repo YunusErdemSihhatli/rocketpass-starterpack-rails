@@ -1,0 +1,13 @@
+<h1>Kullanıcı Davet Et</h1>
+
+<%= form_with url: admin_invitations_path, method: :post do |f| %>
+  <div>
+    <%= label_tag :email, "E-posta" %><br>
+    <%= email_field_tag 'invitation[email]', nil, required: true %>
+  </div>
+
+  <div style="margin-top: 12px;">
+    <%= submit_tag "Davet Gönder" %>
+  </div>
+<% end %>
+

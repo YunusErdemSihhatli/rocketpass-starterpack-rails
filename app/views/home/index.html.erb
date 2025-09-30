@@ -1,0 +1,17 @@
+<main class="container">
+  <h1>Hoş geldiniz</h1>
+  <% if user_signed_in? %>
+    <p>Giriş yaptınız: <strong><%= current_user.email %></strong></p>
+    <p>
+      <%= link_to "Admin Panel", admin_root_path %>
+      |
+      <%= link_to "Çıkış yap", destroy_user_session_path, data: { turbo_method: :delete } %>
+    </p>
+  <% else %>
+    <p>
+      <%= link_to "Giriş yap", new_user_session_path %> veya
+      <%= link_to "Kayıt ol", new_user_registration_path %>
+    </p>
+  <% end %>
+</main>
+

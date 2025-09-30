@@ -1,0 +1,13 @@
+---
+:concurrency: 5
+:queues:
+  - default
+  - mailers
+  - low
+
+schedule:
+  cleanup_failed_tasks:
+    cron: '0 3 * * *'
+    class: 'CleanupFailedTasksWorker'
+    queue: low
+
