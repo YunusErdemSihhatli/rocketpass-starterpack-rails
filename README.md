@@ -1,77 +1,88 @@
 # Rocketpass Starterpack Rails
 
-Hızlı başlangıç için kimlik doğrulama (Devise + JWT), roller/izinler, multi-tenancy (ActsAsTenant), admin panel (Administrate), davet (devise_invitable) ve API dokümantasyonu (RSwag) içerir.
+Includes authentication (Devise + JWT), roles/permissions, multi-tenancy (ActsAsTenant), admin panel (Administrate), invitations (devise_invitable), and API documentation (RSwag) for a quick start.
 
-## Kurulum
+## Setup
 
-1) Bundler sürümü (lokalde): `gem install bundler:2.5.16`
-2) Bağımlılıklar: `bundle install`
-3) Veritabanı: `bin/rails db:create db:migrate db:seed`
-4) Sunucu: `bin/rails s`
+1. Bundler version (local): `gem install bundler:2.5.16`  
+2. Dependencies: `bundle install`  
+3. Database: `bin/rails db:create db:migrate db:seed`  
+4. Server: `bin/rails s`  
 
-- Admin kullanıcı: `admin@example.com` / `password123`
-- Admin panel: `/admin`
+- Admin user: `admin@example.com` / `password123`  
+- Admin panel: `/admin`  
 
 ## API
 
-- JWT tabanlı auth uçları: `/api/v1/auth`, `/api/v1/auth/sign_in`, `/api/v1/auth/sign_out`, `/api/v1/auth/refresh`, `/api/v1/me`
-- Bearer token: `Authorization: Bearer <access_token>`
+- JWT-based auth endpoints:  
+  - `/api/v1/auth`  
+  - `/api/v1/auth/sign_in`  
+  - `/api/v1/auth/sign_out`  
+  - `/api/v1/auth/refresh`  
+  - `/api/v1/me`  
+- Bearer token: `Authorization: Bearer <access_token>`  
 
-## API Dokümantasyonu (Swagger / RSwag)
+## API Documentation (Swagger / RSwag)
 
-- UI: `http://localhost:3000/api-docs`
-- Kaynak dosya: `swagger/v1/openapi.yaml`
+- UI: `http://localhost:3000/api-docs`  
+- Source file: `swagger/v1/openapi.yaml`  
 
-### RSpec + rswag-specs ile üretim
+### Generated with RSpec + rswag-specs
 
-- Testleri çalıştır: `bundle exec rspec`
-- Swagger dosyasını üret: `bundle exec rake rswag:specs:swaggerize`
-  - Çıktı: `swagger/v1/openapi.yaml` (UI bu dosyayı servis eder)
+- Run tests: `bundle exec rspec`  
+- Generate Swagger file: `bundle exec rake rswag:specs:swaggerize`  
+  - Output: `swagger/v1/openapi.yaml` (served by the UI)  
 
-Endpoint’ler ve şemalar `spec/requests/api/v1/auth_spec.rb` altında rswag DSL ile tanımlıdır. Gerekirse `run_test!` çağrıları aktif edilerek gerçek istek/yanıt doğrulaması yapılabilir.
+Endpoints and schemas are defined under `spec/requests/api/v1/auth_spec.rb` using the RSwag DSL.  
+If needed, `run_test!` calls can be enabled to validate real request/response flows.  
 
-## Docker ile Hızlı Başlangıç
+## Quick Start with Docker
 
-Önkoşul: Docker ve Docker Compose kurulu olmalı.
+**Prerequisites:** Docker and Docker Compose installed.
 
-1) `.env` dosyanı hazırla (opsiyonel ama önerilir)
-   - `cp .env.example .env`
-   - `RAILS_MASTER_KEY` değerini `config/master.key` içeriğinden kopyalayın veya `export RAILS_MASTER_KEY=$(cat config/master.key)`
-2) Docker servislerini başlat
-   - `docker compose build`
-   - `docker compose up -d`
-3) Veritabanını hazırla (ilk kurulumda)
-   - `docker compose run --rm web bin/rails db:prepare`
-4) Uygulama adresleri
-   - API/UI: `http://localhost:3000`
-   - Swagger UI: `http://localhost:3000/api-docs`
-   - Sidekiq UI: `http://localhost:3000/admin/sidekiq` (admin kullanıcı ile giriş gerekir)
+1. Prepare your `.env` file (optional but recommended)  
+   - `cp .env.example .env`  
+   - Copy `RAILS_MASTER_KEY` from `config/master.key` or set it with:  
+     `export RAILS_MASTER_KEY=$(cat config/master.key)`  
+2. Start Docker services  
+   - `docker compose build`  
+   - `docker compose up -d`  
+3. Prepare the database (on first setup)  
+   - `docker compose run --rm web bin/rails db:prepare`  
+4. Application URLs  
+   - API/UI: `http://localhost:3000`  
+   - Swagger UI: `http://localhost:3000/api-docs`  
+   - Sidekiq UI: `http://localhost:3000/admin/sidekiq` (requires admin login)  
 
-Notlar:
-- Bu compose dosyası varsayılan olarak uygulamayı production modunda çalıştırır (Dockerfile üretim odaklıdır). Geliştirmede isterseniz `RAILS_ENV=development` vererek geliştirme modunda çalıştırabilirsiniz.
-- Active Storage için local storage varsayılandır. S3 kullanmak için `config/environments/production.rb` altında servisi `:amazon` yapıp gerekli AWS ENV değişkenlerini `.env` dosyanıza ekleyin.
-- Postgres ve Redis, `docker-compose.yml` ile birlikte ayağa kalkar.
+**Notes:**  
+- This compose file runs the app in **production mode** by default (Dockerfile is production-ready). For development, run with `RAILS_ENV=development`.  
+- Active Storage defaults to **local storage**. To use S3, set the service to `:amazon` in `config/environments/production.rb` and add the required AWS ENV variables to your `.env` file.  
+- Postgres and Redis are provisioned via `docker-compose.yml`.  
 
-## Kullanılan Gem'ler (Özet)
+## Gems Used (Summary)
 
-- Devise: Kimlik doğrulama, `devise-jwt` ile JWT, `devise_invitable` ile davet.
-- Pundit: Policy tabanlı yetkilendirme.
-- Rolify + Permission modeli: Esnek rol/izin.
-- ActsAsTenant: Account bazlı multi-tenancy.
-- Administrate: Admin panel.
-- Blueprinter: JSON serileştirme (Blueprint pattern).
-- RSwag (api/ui/specs): Swagger/OpenAPI dokümantasyonu ve UI.
-- Doorkeeper: OAuth2 provider (password flow dahil).
-- Rack CORS: Frontend/mobil client CORS desteği.
-- Pagy: Sayfalama (hafif ve hızlı).
-- Ransack: Filtreleme/sıralama DSL’i.
-- pg_search: Postgres full-text search.
-- Sidekiq + sidekiq-scheduler + Redis: Arka plan işler ve cron.
-- AASM: State machine (örn. Task lifecycle).
-- Active Storage + validations + image_processing + aws-sdk-s3: Dosya yükleme, doğrulama, resim işleme, S3.
-- RSpec + rswag-specs: Test + API doc üretimi.
-- Debug ve DX: pry-rails, awesome_print, dotenv-rails.
-- Güvenlik ve stil: brakeman, rubocop-rails-omakase, rubocop-rails.
+- **Devise**: Authentication (`devise-jwt` for JWT, `devise_invitable` for invitations).  
+- **Pundit**: Policy-based authorization.  
+- **Rolify + Permission model**: Flexible role/permission system.  
+- **ActsAsTenant**: Account-based multi-tenancy.  
+- **Administrate**: Admin panel.  
+- **Blueprinter**: JSON serialization (Blueprint pattern).  
+- **RSwag (api/ui/specs)**: Swagger/OpenAPI documentation and UI.  
+- **Doorkeeper**: OAuth2 provider (including password flow).  
+- **Rack CORS**: CORS support for frontend/mobile clients.  
+- **Pagy**: Lightweight, fast pagination.  
+- **Ransack**: Filtering/sorting DSL.  
+- **pg_search**: Postgres full-text search.  
+- **Sidekiq + sidekiq-scheduler + Redis**: Background jobs and cron.  
+- **AASM**: State machine (e.g., Task lifecycle).  
+- **Active Storage + validations + image_processing + aws-sdk-s3**: File upload, validation, image processing, S3.  
+- **RSpec + rswag-specs**: Testing + API doc generation.  
+- **Debug & DX**: pry-rails, awesome_print, dotenv-rails.  
+- **Security & style**: brakeman, rubocop-rails-omakase, rubocop-rails.  
 
-Geliştirmede kolaylık için örnek `.env` dosyası: `.env.example` (kopyalayıp `.env` yapın ve değerleri doldurun).
+---
+
+For development convenience, an example `.env` file is provided: `.env.example`.  
+Copy it to `.env` and fill in the values as needed.  
+
 # rocketpass-starterpack-rails
