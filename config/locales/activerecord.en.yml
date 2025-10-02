@@ -1,0 +1,15 @@
+en:
+  activerecord:
+    models:
+      account: "Account"
+      user: "User"
+      profile: "Profile"
+      task: "Task"
+    attributes:
+      profile:
+        first_name: "First name"
+        last_name: "Last name"
+        bio: "Bio"
+        user: "User"
+        account: "Account"
+

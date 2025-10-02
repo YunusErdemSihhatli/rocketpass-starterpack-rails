@@ -15,6 +15,13 @@ class User < ApplicationRecord
   # ActsAsTenant scopes for multi-tenancy readiness
   acts_as_tenant(:account)
 
+  # Optional user preferred locale (e.g., 'en' or 'tr')
+  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }, allow_nil: true
+
+  def preferred_locale
+    locale.presence
+  end
+
   def has_role?(role_name)
     roles.where(name: role_name.to_s).exists?
   end

@@ -5,14 +5,13 @@ module Admin
 
     def create
       email = params.require(:invitation).permit(:email)[:email]
-      user = User.invite!({ email: email, account: current_user.account }, current_user)
-      if user.persisted?
-        redirect_to admin_user_path(user), notice: "Davet gönderildi: #{email}"
+      result = Users::InviteService.call(email: email, inviter: current_user)
+      if result.success?
+        redirect_to admin_user_path(result.value), notice: I18n.t('flash.invitations.created', email: email)
       else
-        flash.now[:alert] = user.errors.full_messages.to_sentence
+        flash.now[:alert] = Array(result.error).to_sentence
         render :new, status: :unprocessable_entity
       end
     end
   end
 end
-

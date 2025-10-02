@@ -1,0 +1,18 @@
+tr:
+  activerecord:
+    models:
+      account: "Hesap"
+      user: "Kullanıcı"
+      profile: "Profil"
+      task: "Görev"
+    attributes:
+      profile:
+        first_name: "Ad"
+        last_name: "Soyad"
+        bio: "Biyografi"
+        user: "Kullanıcı"
+        account: "Hesap"
+  errors:
+    messages:
+      blank: "boş olamaz"
+

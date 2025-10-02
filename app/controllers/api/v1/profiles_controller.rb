@@ -16,14 +16,11 @@ module Api
       def avatar
         profile = policy_scope(Profile).find(params[:id])
         authorize(profile)
-        unless params[:file].present?
-          return render_errors('file is required')
-        end
-        profile.avatar.attach(params[:file])
-        if profile.save
-          render_resource(profile, resource_blueprint)
+        result = Profiles::UpdateAvatarService.call(profile: profile, file: params[:file])
+        if result.success?
+          render_resource(result.value, resource_blueprint)
         else
-          render_errors(profile.errors.full_messages)
+          render_errors(result.error, status: result.code || :unprocessable_entity)
         end
       end
 
@@ -31,10 +28,12 @@ module Api
       def purge_avatar
         profile = policy_scope(Profile).find(params[:id])
         authorize(profile)
-        if profile.avatar.attached?
-          profile.avatar.purge
+        result = Profiles::UpdateAvatarService.call(profile: profile, purge: true)
+        if result.success?
+          head :no_content
+        else
+          render_errors(result.error, status: result.code || :unprocessable_entity)
         end
-        head :no_content
       end
 
       # POST /api/v1/profiles/:id/avatar/attach
@@ -42,13 +41,11 @@ module Api
       def attach_avatar
         profile = policy_scope(Profile).find(params[:id])
         authorize(profile)
-        signed_id = params[:signed_id].to_s
-        return render_errors('signed_id is required') if signed_id.blank?
-        profile.avatar.attach(signed_id)
-        if profile.save
-          render_resource(profile, resource_blueprint)
+        result = Profiles::UpdateAvatarService.call(profile: profile, signed_id: params[:signed_id].to_s)
+        if result.success?
+          render_resource(result.value, resource_blueprint)
         else
-          render_errors(profile.errors.full_messages)
+          render_errors(result.error, status: result.code || :unprocessable_entity)
         end
       end
     end

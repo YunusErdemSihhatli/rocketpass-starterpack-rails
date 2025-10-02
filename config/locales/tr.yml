@@ -1,0 +1,18 @@
+tr:
+  controllers:
+    admin:
+      not_authorized: "Bu işlem için yetkiniz yok."
+  services:
+    profiles:
+      update_avatar:
+        errors:
+          missing_avatar: "avatar gerekli"
+    users:
+      invite:
+        errors:
+          email_required: "email gerekli"
+          inviter_required: "davet eden kullanıcı gerekli"
+          account_required: "hesap gerekli"
+  flash:
+    invitations:
+      created: "%{email} adresine davet gönderildi"

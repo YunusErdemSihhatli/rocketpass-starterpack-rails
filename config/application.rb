@@ -29,5 +29,10 @@ module RocketpassStarterpackRails
 
     # Background jobs with Sidekiq
     config.active_job.queue_adapter = :sidekiq
+
+    # I18n configuration
+    config.i18n.available_locales = %i[en tr]
+    config.i18n.default_locale = :en
+    config.i18n.fallbacks = [:en]
   end
 end

@@ -25,28 +25,34 @@ module Api
       def create
         record = apply_scope(resource_model).new(resource_params)
         authorize(record)
-        if record.save
-          render_resource(record, resource_blueprint, status: :created)
+        result = Resources::CreateService.call(record: record)
+        if result.success?
+          render_resource(result.value, resource_blueprint, status: :created)
         else
-          render_errors(record.errors.full_messages)
+          render_errors(result.error)
         end
       end
 
       def update
         record = apply_scope(resource_model).find(params[:id])
         authorize(record)
-        if record.update(resource_params)
-          render_resource(record, resource_blueprint)
+        result = Resources::UpdateService.call(record: record, attributes: resource_params)
+        if result.success?
+          render_resource(result.value, resource_blueprint)
         else
-          render_errors(record.errors.full_messages)
+          render_errors(result.error)
         end
       end
 
       def destroy
         record = apply_scope(resource_model).find(params[:id])
         authorize(record)
-        record.destroy
-        head :no_content
+        result = Resources::DestroyService.call(record: record)
+        if result.success?
+          head :no_content
+        else
+          render_errors(result.error)
+        end
       end
 
       private

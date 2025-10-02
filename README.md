@@ -86,3 +86,50 @@ For development convenience, an example `.env` file is provided: `.env.example`.
 Copy it to `.env` and fill in the values as needed.  
 
 # rocketpass-starterpack-rails
+
+## Service Layer (English)
+
+This starter now includes a lightweight, explicit service layer to encapsulate business logic and keep controllers/models lean.
+
+- Location: `app/services`
+- Base class: `ApplicationService` with `.call`, `success`, and `failure` helpers
+- Result object: `Service::Result` providing `success?`, `value`, `error`, `code`
+- Generic CRUD services (used by API `ResourceController`):
+  - `Resources::CreateService` → persists a new record
+  - `Resources::UpdateService` → updates attributes
+  - `Resources::DestroyService` → destroys a record
+- Sample domain services:
+  - `Profiles::UpdateAvatarService` for attach/purge avatar
+  - `Users::InviteService` for sending invitations in Admin
+
+API controllers (`Api::V1::ResourceController`) now delegate `create/update/destroy` to services, returning uniform error handling via the result object.
+
+Example usage
+```
+result = Resources::CreateService.call(record: profile)
+if result.success?
+  # result.value is the persisted record
+else
+  # result.error contains messages; result.code for HTTP mapping
+end
+```
+
+## Internationalization (I18n) (English)
+
+Multi-language support is enabled for API and web.
+
+- Config: `config.i18n.available_locales = %i[en tr]`, `config.i18n.default_locale = :en`
+- Locale selection:
+  - API: `Api::V1::BaseController` sets locale from `X-Locale` header or `?locale=` param
+  - Web: `ApplicationController` applies the same logic
+- Translation files:
+  - `config/locales/en.yml`
+  - `config/locales/tr.yml`
+- Services use I18n for error messages (e.g. `Profiles::UpdateAvatarService`, `Users::InviteService`).
+
+Client usage
+- Send `X-Locale: tr` to receive Turkish messages where applicable.
+- Omit or send an unsupported locale to fall back to English.
+
+Swagger/rswag
+- Request specs under `spec/requests/api/v1/profiles_spec.rb` include Authorization and exercise CRUD endpoints, which internally call the service layer.
