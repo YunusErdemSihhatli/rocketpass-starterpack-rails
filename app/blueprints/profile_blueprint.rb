@@ -13,7 +13,7 @@ class ProfileBlueprint < BaseBlueprint
 
   field :avatar_thumb_url do |profile|
     if profile.avatar.attached?
-      variant = profile.avatar.variant(resize_to_limit: [200, 200]).processed
+      variant = profile.avatar.variant(resize_to_limit: [ 200, 200 ]).processed
       Rails.application.routes.url_helpers.url_for(variant)
     end
   end

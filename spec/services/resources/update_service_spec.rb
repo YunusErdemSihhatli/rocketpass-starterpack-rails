@@ -22,4 +22,3 @@ RSpec.describe Resources::UpdateService, type: :service do
     expect(result.error).to include("Last name can't be blank")
   end
 end
-

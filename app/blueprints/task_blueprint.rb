@@ -3,4 +3,3 @@ class TaskBlueprint < BaseBlueprint
 
   fields :user_id, :account_id, :title, :description, :state, :created_at, :updated_at
 end
-

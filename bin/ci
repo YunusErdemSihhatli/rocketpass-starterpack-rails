@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RAILS_ENV=test bundle exec rails db:prepare
+bundle exec rubocop --cache false
+bundle exec brakeman --no-pager
+bundle exec rspec

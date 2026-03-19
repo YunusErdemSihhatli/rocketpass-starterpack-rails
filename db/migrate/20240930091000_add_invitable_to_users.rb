@@ -14,4 +14,3 @@ class AddInvitableToUsers < ActiveRecord::Migration[8.0]
     add_index :users, :invited_by_id
   end
 end
-

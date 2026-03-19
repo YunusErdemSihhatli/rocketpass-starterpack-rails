@@ -15,4 +15,3 @@ RSpec.describe Resources::DestroyService, type: :service do
     }.to change { Profile.count }.by(-1)
   end
 end
-

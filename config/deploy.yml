@@ -7,11 +7,11 @@ image: your-user/rocketpass_starterpack_rails
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.1
-  # job:
-  #   hosts:
-  #     - 192.168.0.1
-  #   cmd: bin/jobs
+    - 203.0.113.10
+  job:
+    hosts:
+      - 203.0.113.10
+    cmd: bundle exec sidekiq -C config/sidekiq.yml
 
 # Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
 # Remove this section when using multiple web servers and ensure you terminate SSL at your load balancer.
@@ -23,8 +23,8 @@ proxy:
 
 # Credentials for your image host.
 registry:
-  # Specify the registry server, if you're not using Docker Hub
-  # server: registry.digitalocean.com / ghcr.io / ...
+  # Use GHCR for the lowest-friction GitHub-based setup.
+  server: ghcr.io
   username: your-user
 
   # Always use an access token rather than real password when possible.
@@ -35,23 +35,13 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - DATABASE_URL
+    - REDIS_URL
+    - SENTRY_DSN
   clear:
-    # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
-    # When you start using multiple servers, you should split out job processing to a dedicated machine.
-    SOLID_QUEUE_IN_PUMA: true
-
-    # Set number of processes dedicated to Solid Queue (default: 1)
-    # JOB_CONCURRENCY: 3
-
-    # Set number of cores available to the application on each server (default: 1).
-    # WEB_CONCURRENCY: 2
-
-    # Match this to any external database server to configure Active Record correctly
-    # Use rocketpass_starterpack_rails-db for a db accessory server on same machine via local kamal docker network.
-    # DB_HOST: 192.168.0.2
-
-    # Log everything from Rails
-    # RAILS_LOG_LEVEL: debug
+    APP_HOST: app.example.com
+    RAILS_LOG_LEVEL: info
+    WEB_CONCURRENCY: 2
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
@@ -91,26 +81,5 @@ builder:
 # ssh:
 #   user: app
 
-# Use accessory services (secrets come from .kamal/secrets).
-# accessories:
-#   db:
-#     image: mysql:8.0
-#     host: 192.168.0.2
-#     # Change to 3306 to expose port to the world instead of just local network.
-#     port: "127.0.0.1:3306:3306"
-#     env:
-#       clear:
-#         MYSQL_ROOT_HOST: '%'
-#       secret:
-#         - MYSQL_ROOT_PASSWORD
-#     files:
-#       - config/mysql/production.cnf:/etc/mysql/my.cnf
-#       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
-#     directories:
-#       - data:/var/lib/mysql
-#   redis:
-#     image: redis:7.0
-#     host: 192.168.0.2
-#     port: 6379
-#     directories:
-#       - data:/data
+# Add accessories if you want Kamal to manage Postgres/Redis on the same host.
+# For a simpler starter, use managed Postgres and Redis and inject DATABASE_URL/REDIS_URL.

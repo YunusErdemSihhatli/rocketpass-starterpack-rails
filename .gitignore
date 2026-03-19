@@ -30,3 +30,11 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Test and coverage artifacts
+/coverage
+.rspec_status
+
+# Local deploy secrets
+/.kamal/secrets*
+!/.kamal/secrets

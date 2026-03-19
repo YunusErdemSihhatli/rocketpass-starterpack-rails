@@ -25,4 +25,3 @@ RSpec.describe Resources::CreateService, type: :service do
     expect(result.error).to include("First name can't be blank")
   end
 end
-
