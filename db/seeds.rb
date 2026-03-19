@@ -4,7 +4,8 @@
 #
 admin_account = Account.find_or_create_by!(name: "Admin Account")
 
-admin_role = Role.find_or_create_by!(name: "admin")
+superadmin_role = Role.find_or_create_by!(name: "superadmin", account: nil)
+admin_role = Role.find_or_create_by!(name: "admin", account: admin_account)
 
 if (user = User.find_by(email: "admin@example.com")).nil?
   user = User.create!(
@@ -19,7 +20,21 @@ unless user.roles.include?(admin_role)
   user.roles << admin_role
 end
 
+if (superadmin = User.find_by(email: "superadmin@example.com")).nil?
+  superadmin = User.create!(
+    email: "superadmin@example.com",
+    password: "password123",
+    password_confirmation: "password123",
+    account: admin_account
+  )
+end
+
+unless superadmin.roles.include?(superadmin_role)
+  superadmin.roles << superadmin_role
+end
+
 puts "Seeded admin user: admin@example.com / password123"
+puts "Seeded superadmin user: superadmin@example.com / password123"
 
 # Create admin profile if not exists
 Profile.find_or_create_by!(account: admin_account, user: user) do |p|

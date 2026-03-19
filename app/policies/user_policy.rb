@@ -1,40 +1,27 @@
 class UserPolicy < ApplicationPolicy
   def index?
-    admin?
+    superadmin? || admin?
   end
 
   def show?
-    admin? || same_account?
+    same_account?
   end
 
   def create?
-    admin?
+    superadmin? || admin?
   end
 
   def update?
-    admin?
+    same_account? && (superadmin? || admin?)
   end
 
   def destroy?
-    admin?
+    same_account? && (superadmin? || admin?)
   end
 
   class Scope < Scope
     def resolve
-      return scope.none unless user
-      return scope.all if admin?
-      scope.where(account_id: user.account_id)
+      super
     end
   end
-
-  private
-
-  def admin?
-    user&.has_role?(:admin)
-  end
-
-  def same_account?
-    user && record.account_id == user.account_id
-  end
 end
-

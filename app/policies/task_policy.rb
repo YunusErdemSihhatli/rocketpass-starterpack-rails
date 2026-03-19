@@ -16,7 +16,7 @@ class TaskPolicy < ApplicationPolicy
   end
 
   def destroy?
-    admin? || same_account?
+    same_account? && (superadmin? || admin? || user == record.user)
   end
 
   def event?
@@ -25,19 +25,7 @@ class TaskPolicy < ApplicationPolicy
 
   class Scope < Scope
     def resolve
-      return scope.none unless user
-      scope.where(account_id: user.account_id)
+      super
     end
   end
-
-  private
-
-  def admin?
-    user&.has_role?(:admin)
-  end
-
-  def same_account?
-    user && record.account_id == user.account_id
-  end
 end
-
