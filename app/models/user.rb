@@ -22,15 +22,49 @@ class User < ApplicationRecord
     locale.presence
   end
 
-  def has_role?(role_name)
-    roles.where(name: role_name.to_s).exists?
+  def superadmin?
+    roles.where(name: "superadmin", account_id: nil).exists?
   end
 
-  def permission_keys
-    roles.includes(:permissions).flat_map { |r| r.permissions.pluck(:key) }.uniq
+  def admin?(account: self.account)
+    roles.where(name: "admin", account_id: extract_account_id(account)).exists?
   end
 
-  def can?(permission_key)
-    permission_keys.include?(permission_key.to_s)
+  def admin_panel_access?(account: self.account)
+    superadmin? || admin?(account: account)
+  end
+
+  def has_role?(role_name, account: self.account)
+    role_name = role_name.to_s
+    return superadmin? if role_name == "superadmin"
+
+    roles.where(name: role_name, account_id: extract_account_id(account)).exists?
+  end
+
+  def permission_keys(account: self.account)
+    return [ "*" ] if superadmin?
+
+    roles
+      .where(account_id: extract_account_id(account))
+      .includes(:permissions)
+      .flat_map { |role| role.permissions.select { |permission| permission.account_id == role.account_id }.map(&:key) }
+      .uniq
+  end
+
+  def can?(permission_key, account: self.account)
+    return true if superadmin?
+
+    permission_keys(account: account).include?(permission_key.to_s)
+  end
+
+  private
+
+  def extract_account_id(account)
+    case account
+    when Account
+      account.id
+    else
+      account || account_id
+    end
   end
 end

@@ -21,4 +21,3 @@ class AccountDashboard < Administrate::BaseDashboard
     account.name
   end
 end
-

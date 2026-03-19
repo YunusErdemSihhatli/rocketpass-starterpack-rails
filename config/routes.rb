@@ -24,22 +24,22 @@ Rails.application.routes.draw do
       scope defaults: { format: :json } do
         # Session endpoints will dispatch/revoke JWT via Devise-JWT
         devise_for :users,
-                   path: '',
+                   path: "",
                    path_names: {
-                     sign_in: 'auth/sign_in',
-                     sign_out: 'auth/sign_out',
-                     registration: 'auth'
+                     sign_in: "auth/sign_in",
+                     sign_out: "auth/sign_out",
+                     registration: "auth"
                    },
                    controllers: {
-                     sessions: 'api/v1/users/sessions',
-                     registrations: 'api/v1/users/registrations'
+                     sessions: "api/v1/users/sessions",
+                     registrations: "api/v1/users/registrations"
                    }
 
         # Example protected resource
-        get 'me', to: 'users#me'
+        get "me", to: "users#me"
 
         # Token refresh
-        post 'auth/refresh', to: 'tokens#refresh'
+        post "auth/refresh", to: "tokens#refresh"
 
         # Generic resources
         resources :profiles do
@@ -55,10 +55,10 @@ Rails.application.routes.draw do
             post :attachments
           end
           post "attachments/attach", to: "attachments#attach_signed", on: :member
-          delete 'attachments/:attachment_id', to: 'tasks#purge_attachment', on: :member
+          delete "attachments/:attachment_id", to: "tasks#purge_attachment", on: :member
         end
         # Direct upload pre-sign endpoint
-        post 'uploads/presign', to: 'uploads#presign'
+        post "uploads/presign", to: "uploads#presign"
       end
     end
   end
@@ -67,12 +67,12 @@ Rails.application.routes.draw do
   use_doorkeeper
 
   # Swagger / OpenAPI Docs (RSwag)
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
+  mount Rswag::Ui::Engine => "/api-docs"
+  mount Rswag::Api::Engine => "/api-docs"
 
   # Sidekiq Web (admin only)
-  require 'sidekiq/web'
-  authenticate :user, lambda { |u| u.has_role?(:admin) } do
-    mount Sidekiq::Web => '/admin/sidekiq'
+  require "sidekiq/web"
+  authenticate :user, lambda { |u| u&.admin_panel_access? } do
+    mount Sidekiq::Web => "/admin/sidekiq"
   end
 end

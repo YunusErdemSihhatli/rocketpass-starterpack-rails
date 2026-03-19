@@ -7,15 +7,15 @@ class ApplicationPolicy
   end
 
   def index?
-    false
+    user.present?
   end
 
   def show?
-    scope.where(id: record.id).exists?
+    superadmin? || same_account?
   end
 
   def create?
-    false
+    superadmin? || admin?
   end
 
   def new?
@@ -23,7 +23,7 @@ class ApplicationPolicy
   end
 
   def update?
-    false
+    superadmin? || admin?
   end
 
   def edit?
@@ -31,11 +31,36 @@ class ApplicationPolicy
   end
 
   def destroy?
-    false
+    superadmin? || admin?
   end
 
   def scope
     Pundit.policy_scope!(user, record.class)
+  end
+
+  private
+
+  def superadmin?
+    user&.superadmin?
+  end
+
+  def admin?
+    user&.admin?
+  end
+
+  def same_account?(target = record)
+    return false unless user
+    return true if superadmin?
+
+    target_account_id = account_id_for(target)
+    target_account_id.present? && target_account_id == user.account_id
+  end
+
+  def account_id_for(target)
+    return target.id if target.is_a?(Account)
+    return target.account_id if target.respond_to?(:account_id)
+
+    nil
   end
 
   class Scope
@@ -47,8 +72,16 @@ class ApplicationPolicy
     end
 
     def resolve
-      scope.all
+      return scope.none unless user
+      return scope.all if user.superadmin?
+
+      if scope <= Account
+        scope.where(id: user.account_id)
+      elsif scope.column_names.include?("account_id")
+        scope.where(account_id: user.account_id)
+      else
+        scope.all
+      end
     end
   end
 end
-
