@@ -9,4 +9,3 @@ class CreatePermissions < ActiveRecord::Migration[8.0]
     add_index :permissions, :key, unique: true
   end
 end
-

@@ -4,4 +4,3 @@ class AddJtiToUsers < ActiveRecord::Migration[8.0]
     add_index :users, :jti, unique: true
   end
 end
-

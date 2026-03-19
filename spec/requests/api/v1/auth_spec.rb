@@ -128,4 +128,3 @@ RSpec.describe 'Auth API', swagger_doc: 'v1/openapi.yaml', type: :request do
     end
   end
 end
-

@@ -9,7 +9,7 @@ module Api
 
         def build_resource(hash = nil)
           super
-          resource.account ||= Account.create!(name: (sign_up_params[:account_name].presence || resource.email.split('@').first))
+          resource.account ||= Account.create!(name: (sign_up_params[:account_name].presence || resource.email.split("@").first))
         end
 
         def sign_up_params
@@ -18,18 +18,18 @@ module Api
 
         def respond_with(resource, _opts = {})
           if resource.persisted?
-            access_token = request.env['warden-jwt_auth.token']
+            access_token = request.env["warden-jwt_auth.token"]
             _refresh_record, refresh_token = RefreshToken.generate_for!(
               resource,
               user_agent: request.user_agent,
               ip: request.remote_ip
             )
             render json: {
-              message: 'signed_up',
+              message: "signed_up",
               user: { id: resource.id, email: resource.email },
               access_token: access_token,
               refresh_token: refresh_token,
-              token_type: 'Bearer',
+              token_type: "Bearer",
               expires_in: 15.minutes.to_i
             }, status: :ok
           else

@@ -22,4 +22,3 @@ class UserDashboard < Administrate::BaseDashboard
     user.email
   end
 end
-

@@ -27,4 +27,3 @@ class CreateActiveStorageTables < ActiveRecord::Migration[8.0]
     add_index :active_storage_variant_records, [ :blob_id, :variation_digest ], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 end
-

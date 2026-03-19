@@ -1,2 +1,8 @@
-#!/usr/bin/env ruby
-exec "./bin/rails", "server", *ARGV
+#!/usr/bin/env sh
+
+if ! command -v foreman >/dev/null 2>&1; then
+  echo "Foreman is not installed. Installing dependencies with Bundler should provide it."
+  exec bundle exec foreman start -f Procfile.dev
+fi
+
+exec foreman start -f Procfile.dev "$@"

@@ -13,4 +13,3 @@ class ApplicationService
     Service::Result.failure(error, code: code, details: details, **meta)
   end
 end
-
