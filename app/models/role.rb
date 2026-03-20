@@ -1,9 +1,8 @@
 class Role < ApplicationRecord
-  belongs_to :account, optional: true
   has_and_belongs_to_many :users, join_table: :users_roles
   has_and_belongs_to_many :permissions, join_table: :roles_permissions
 
-  acts_as_tenant(:account)
+  acts_as_tenant(:account, optional: true, has_global_records: true)
 
   scope :global, -> { where(account_id: nil) }
   scope :tenant_owned, -> { where.not(account_id: nil) }

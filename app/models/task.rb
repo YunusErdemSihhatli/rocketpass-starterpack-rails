@@ -28,7 +28,7 @@ class Task < ApplicationRecord
     end
 
     event :fail do
-      transitions from: [:queued, :in_progress], to: :failed
+      transitions from: [ :queued, :in_progress ], to: :failed
     end
   end
 
@@ -37,7 +37,7 @@ class Task < ApplicationRecord
   end
 
   has_many_attached :files
-  validates :files, content_type: ["image/png", "image/jpg", "image/jpeg", "image/webp", "application/pdf"], size: { less_than: 20.megabytes }
+  validates :files, content_type: [ "image/png", "image/jpeg", "image/webp", "application/pdf" ], size: { less_than: 20.megabytes }
 
   def self.ransackable_attributes(_auth_object = nil)
     %w[title description state user_id account_id created_at updated_at]

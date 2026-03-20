@@ -13,10 +13,10 @@ class Profile < ApplicationRecord
   validates :last_name, presence: true
 
   has_one_attached :avatar
-  validates :avatar, attached: false, content_type: ["image/png", "image/jpg", "image/jpeg", "image/webp"], size: { less_than: 5.megabytes }
+  validates :avatar, attached: false, content_type: [ "image/png", "image/jpeg", "image/webp" ], size: { less_than: 5.megabytes }
 
   def full_name
-    [first_name, last_name].join(' ')
+    [ first_name, last_name ].join(" ")
   end
 
   # Ransack allowlist (Rails 7+ güvenlik için)

@@ -18,10 +18,13 @@ RSpec.describe 'Profiles API', swagger_doc: 'v1/openapi.yaml', type: :request do
 
       parameter name: :page, in: :query, schema: { type: :integer }
       parameter name: :items, in: :query, schema: { type: :integer }
-      parameter name: :q, in: :query, schema: { type: :object }
       parameter name: :search, in: :query, schema: { type: :string }
 
       response '200', 'Başarılı' do
+        let(:page) { 1 }
+        let(:items) { 20 }
+        let(:search) { nil }
+
         run_test!
       end
     end
@@ -109,7 +112,7 @@ RSpec.describe 'Profiles API', swagger_doc: 'v1/openapi.yaml', type: :request do
       parameter name: :Authorization, in: :header, type: :string, required: true
 
       response '204', 'Silindi' do
-        let(:existing) { Profile.create!(account: account, user: member, first_name: 'Alan', last_name: 'Turing') }
+        let(:existing) { Profile.create!(account: account, user: current_user, first_name: 'Alan', last_name: 'Turing') }
         let(:id) { existing.id }
         run_test!
       end

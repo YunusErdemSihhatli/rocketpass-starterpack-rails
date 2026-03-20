@@ -67,8 +67,10 @@ Rails.application.routes.draw do
   use_doorkeeper
 
   # Swagger / OpenAPI Docs (RSwag)
-  mount Rswag::Ui::Engine => "/api-docs"
-  mount Rswag::Api::Engine => "/api-docs"
+  if defined?(Rswag::Ui) && defined?(Rswag::Api)
+    mount Rswag::Ui::Engine => "/api-docs"
+    mount Rswag::Api::Engine => "/api-docs"
+  end
 
   # Sidekiq Web (admin only)
   require "sidekiq/web"

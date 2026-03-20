@@ -2,7 +2,7 @@ module Api
   module V1
     class ResourceController < BaseController
       include Pagy::Backend
-      include Rendering
+      include Api::V1::Concerns::Rendering
 
       class_attribute :resource_model, :resource_blueprint
 
@@ -77,7 +77,7 @@ module Api
 
       # Subclass should override and strong-permit attributes
       def resource_params
-        raise NotImplementedError, 'Implement resource_params in subclass'
+        raise NotImplementedError, "Implement resource_params in subclass"
       end
     end
   end
