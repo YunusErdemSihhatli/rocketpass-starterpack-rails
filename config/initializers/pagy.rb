@@ -1,5 +1,4 @@
-require 'pagy/extras/metadata'
+require "pagy/extras/metadata"
 
-Pagy::DEFAULT[:items] = 20
-Pagy::DEFAULT[:metadata] = %i[count page items pages prev next]
-
+Pagy::DEFAULT[:limit] = 20
+Pagy::DEFAULT[:metadata] = %i[count page limit pages prev next]
