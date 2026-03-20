@@ -1,9 +1,20 @@
-ENV['RAILS_ENV'] ||= 'test'
+require "simplecov"
 
-require File.expand_path('../config/environment', __dir__)
+SimpleCov.start "rails" do
+  add_filter "/spec/"
+  add_group "Controllers", "app/controllers"
+  add_group "Models", "app/models"
+  add_group "Services", "app/services"
+end
+
+ENV["RAILS_ENV"] ||= "test"
+
+require File.expand_path("../config/environment", __dir__)
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 
-require 'rspec/rails'
+require "rspec/rails"
+
+Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |file| require file }
 
 begin
   ActiveRecord::Migration.maintain_test_schema!

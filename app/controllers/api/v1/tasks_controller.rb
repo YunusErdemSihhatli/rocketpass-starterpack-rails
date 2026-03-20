@@ -29,7 +29,7 @@ module Api
         task = policy_scope(Task).find(params[:id])
         authorize(task)
         unless params[:files].present?
-          return render_errors('files[] is required')
+          return render_errors("files[] is required")
         end
         Array(params[:files]).each do |f|
           task.files.attach(f)
@@ -46,7 +46,7 @@ module Api
         task = policy_scope(Task).find(params[:id])
         authorize(task)
         attachment = task.files.attachments.find_by(id: params[:attachment_id])
-        return render_errors('attachment not found', status: :not_found) unless attachment
+        return render_errors("attachment not found", status: :not_found) unless attachment
         attachment.purge
         head :no_content
       end
@@ -57,7 +57,7 @@ module Api
         task = policy_scope(Task).find(params[:id])
         authorize(task)
         signed_ids = Array(params[:signed_ids]).map(&:to_s).reject(&:blank?)
-        return render_errors('signed_ids[] is required') if signed_ids.empty?
+        return render_errors("signed_ids[] is required") if signed_ids.empty?
         signed_ids.each { |sid| task.files.attach(sid) }
         if task.save
           render_resource(task, resource_blueprint)

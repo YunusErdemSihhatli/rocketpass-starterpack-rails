@@ -56,10 +56,12 @@ gem "aasm"
 gem "active_storage_validations"
 gem "image_processing", "~> 1.2"
 gem "aws-sdk-s3", "~> 1"
+gem "sentry-ruby"
+gem "sentry-rails"
+gem "sentry-sidekiq"
 
 group :development do
-  gem "rswag-api"
-  gem "rswag-ui"
+  gem "foreman", require: false
 end
 
 group :development, :test do
@@ -75,8 +77,13 @@ group :development, :test do
   # Testing and API docs
   gem "rspec-rails", "~> 6.0"
   gem "rswag-specs"
+  gem "rswag-api"
+  gem "rswag-ui"
   gem "pry-rails"
   gem "awesome_print"
   gem "dotenv-rails"
+  gem "factory_bot_rails"
+  gem "shoulda-matchers", "~> 6.5"
+  gem "simplecov", require: false
   gem "rubocop-rails", require: false
 end

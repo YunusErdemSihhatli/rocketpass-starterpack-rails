@@ -1,7 +1,7 @@
 class RefreshToken < ApplicationRecord
   belongs_to :user
 
-  scope :active, -> { where(revoked_at: nil).where('expires_at > ?', Time.current) }
+  scope :active, -> { where(revoked_at: nil).where("expires_at > ?", Time.current) }
 
   def self.generate_for!(user, user_agent: nil, ip: nil, ttl: 30.days)
     raw = SecureRandom.urlsafe_base64(64)
@@ -12,7 +12,7 @@ class RefreshToken < ApplicationRecord
       ip: ip,
       expires_at: Time.current + ttl
     )
-    [record, raw]
+    [ record, raw ]
   end
 
   def revoke!
@@ -31,4 +31,3 @@ class RefreshToken < ApplicationRecord
     OpenSSL::Digest::SHA256.hexdigest(token)
   end
 end
-

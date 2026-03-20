@@ -16,4 +16,3 @@ class TaskProcessWorker
     Rails.logger.error("TaskProcessWorker error: #{e.message}")
   end
 end
-

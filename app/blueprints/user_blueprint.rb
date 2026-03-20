@@ -11,4 +11,3 @@ class UserBlueprint < BaseBlueprint
     user.permission_keys
   end
 end
-

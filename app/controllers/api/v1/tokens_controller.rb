@@ -4,12 +4,11 @@ module Api
       include Pundit::Authorization
 
       respond_to :json
-      skip_before_action :verify_authenticity_token
 
       def refresh
         raw = params.require(:refresh_token)
         token = RefreshToken.active.find_by_raw(raw)
-        return render json: { error: 'invalid_refresh_token' }, status: :unauthorized unless token
+        return render json: { error: "invalid_refresh_token" }, status: :unauthorized unless token
 
         user = token.user
 
@@ -28,11 +27,10 @@ module Api
         render json: {
           access_token: access_token,
           refresh_token: new_refresh_token,
-          token_type: 'Bearer',
+          token_type: "Bearer",
           expires_in: 15.minutes.to_i
         }, status: :ok
       end
     end
   end
 end
-

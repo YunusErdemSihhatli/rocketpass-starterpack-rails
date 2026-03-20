@@ -25,6 +25,5 @@ Doorkeeper.configure do
   use_refresh_token
 
   # Enforce access token to be used for public API
-  base_controller 'ActionController::API'
+  base_controller "ActionController::API"
 end
-

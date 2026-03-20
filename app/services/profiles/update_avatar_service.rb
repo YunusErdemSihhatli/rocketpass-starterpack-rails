@@ -19,7 +19,7 @@ module Profiles
 
     def attach_avatar
       unless @file.present? || @signed_id.present?
-        return failure(I18n.t('services.profiles.update_avatar.errors.missing_avatar'), code: :bad_request)
+        return failure(I18n.t("services.profiles.update_avatar.errors.missing_avatar"), code: :bad_request)
       end
 
       if @file.present?

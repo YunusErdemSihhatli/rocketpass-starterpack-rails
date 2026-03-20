@@ -9,14 +9,13 @@ Devise.setup do |config|
   config.jwt do |jwt|
     jwt.secret = jwt_secret
     jwt.dispatch_requests = [
-      ["POST", %r{^/api/v1/auth/sign_in$}],
-      ["POST", %r{^/api/v1/auth$}] # registrations#create
+      [ "POST", %r{^/api/v1/auth/sign_in$} ],
+      [ "POST", %r{^/api/v1/auth$} ] # registrations#create
     ]
     jwt.revocation_requests = [
-      ["DELETE", %r{^/api/v1/auth/sign_out$}]
+      [ "DELETE", %r{^/api/v1/auth/sign_out$} ]
     ]
     jwt.expiration_time = 15.minutes.to_i
-    jwt.request_formats = { user: [:json] }
+    jwt.request_formats = { user: [ :json ] }
   end
 end
-
