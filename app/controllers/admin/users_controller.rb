@@ -9,10 +9,11 @@ module Admin
     end
 
     def resource_params
-      permitted = params.require(resource_class.model_name.param_key).permit(:email, :account_id, role_ids: [])
+      user_params = params.require(resource_class.model_name.param_key)
+      permitted = user_params.permit(:email)
 
-      permitted[:account_id] = current_account.id unless superadmin?
-      permitted[:role_ids] = allowed_roles_for(permitted[:role_ids])
+      permitted[:account_id] = superadmin? ? user_params[:account_id].presence : current_account.id
+      permitted[:role_ids] = allowed_roles_for(user_params[:role_ids])
       permitted
     end
 

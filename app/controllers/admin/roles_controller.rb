@@ -11,12 +11,13 @@ module Admin
     end
 
     def resource_params
-      permitted = params.require(resource_class.model_name.param_key).permit(:name, :account_id, permission_ids: [], user_ids: [])
+      role_params = params.require(resource_class.model_name.param_key)
+      permitted = role_params.permit(:name)
 
-      target_account_id = normalized_account_id(permitted[:account_id])
+      target_account_id = normalized_account_id(role_params[:account_id])
       permitted[:account_id] = target_account_id
-      permitted[:permission_ids] = allowed_permissions_for(permitted[:permission_ids], target_account_id)
-      permitted[:user_ids] = allowed_users_for(permitted[:user_ids], target_account_id)
+      permitted[:permission_ids] = allowed_permissions_for(role_params[:permission_ids], target_account_id)
+      permitted[:user_ids] = allowed_users_for(role_params[:user_ids], target_account_id)
       permitted
     end
 
