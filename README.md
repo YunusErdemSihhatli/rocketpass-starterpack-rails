@@ -365,3 +365,53 @@ This repository should let someone clone it, configure a few secrets, and get al
 - repeatable deploys
 
 That is the baseline. Extra architecture layers should come after that, not before.
+
+## Claude Code Agents
+
+This project includes specialized Claude Code agents for rapid development.
+
+### Available Agents
+
+| Agent | Purpose | Usage |
+|-------|---------|-------|
+| `product-agent` | Orchestrator for feature requests | `@product-agent add user profiles` |
+| `model-agent` | Database models, migrations | `@model-agent create Comment model` |
+| `api-agent` | Controllers, services, serializers | `@api-agent create comments endpoint` |
+| `ui-agent` | Hotwire views, Stimulus | `@ui-agent create comment form` |
+| `test-agent` | RSpec test generation | `@test-agent write specs for comments` |
+| `job-agent` | Sidekiq workers | `@job-agent create notification worker` |
+| `mobile-sdk-agent` | API docs, SDKs | `@mobile-sdk-agent update postman collection` |
+| `review-agent` | Code quality checks | `@review-agent check my changes` |
+| `deploy-agent` | Deployment operations | `@deploy-agent deploy to production` |
+
+### Development Workflow
+
+This project follows a TDD-first development workflow:
+
+1. **Plan** - Understand requirements
+2. **TDD** - Write failing tests first
+3. **Implement** - Write minimal code to pass tests
+4. **Quality** - Run rubocop, brakeman, rspec
+5. **Review** - Self-review with checklist
+6. **PR** - Create PR, wait for CI
+
+See `.claude/workflows/development-workflow.md` for details.
+
+### Agent Files
+
+```
+.claude/
+├── CLAUDE.md                    # Project rules
+├── agents/
+│   ├── product-agent.md         # Orchestrator
+│   ├── model-agent.md           # Database
+│   ├── api-agent.md             # API layer
+│   ├── ui-agent.md              # Frontend
+│   ├── test-agent.md            # Testing
+│   ├── job-agent.md             # Background jobs
+│   ├── mobile-sdk-agent.md      # Mobile SDKs
+│   ├── review-agent.md          # Quality
+│   └── deploy-agent.md          # Deployment
+└── workflows/
+    └── development-workflow.md  # TDD process
+```
