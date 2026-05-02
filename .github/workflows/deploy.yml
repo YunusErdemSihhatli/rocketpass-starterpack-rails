@@ -5,6 +5,10 @@ on:
   push:
     branches: [ main ]
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     if: ${{ secrets.KAMAL_REGISTRY_PASSWORD != '' && secrets.KAMAL_SSH_PRIVATE_KEY != '' }}
@@ -34,3 +38,24 @@ jobs:
           REDIS_URL: ${{ secrets.REDIS_URL }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: bundle exec kamal deploy
+
+      - name: Health check
+        if: success()
+        env:
+          APP_HOST: ${{ secrets.APP_HOST }}
+        run: |
+          if [ -n "$APP_HOST" ]; then
+            echo "Checking health at $APP_HOST/up"
+            for i in 1 2 3 4 5; do
+              if curl -sf "$APP_HOST/up" > /dev/null; then
+                echo "Health check passed"
+                exit 0
+              fi
+              echo "Attempt $i failed, retrying in 10s..."
+              sleep 10
+            done
+            echo "Health check failed after 5 attempts"
+            exit 1
+          else
+            echo "APP_HOST not set, skipping health check"
+          fi

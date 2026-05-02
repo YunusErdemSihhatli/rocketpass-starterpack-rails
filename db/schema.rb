@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_02_120000) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_19_233000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -96,7 +96,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_02_120000) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["key"], name: "index_permissions_on_key", unique: true
+    t.bigint "account_id"
+    t.index ["account_id", "key"], name: "index_permissions_on_account_id_and_key", unique: true
+    t.index ["account_id"], name: "index_permissions_on_account_id"
+    t.index ["key"], name: "index_permissions_on_global_key", unique: true, where: "(account_id IS NULL)"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -129,7 +132,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_02_120000) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_roles_on_name", unique: true
+    t.bigint "account_id"
+    t.index ["account_id", "name"], name: "index_roles_on_account_id_and_name", unique: true
+    t.index ["account_id"], name: "index_roles_on_account_id"
+    t.index ["name"], name: "index_roles_on_global_name", unique: true, where: "(account_id IS NULL)"
   end
 
   create_table "roles_permissions", id: false, force: :cascade do |t|
@@ -194,9 +200,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_02_120000) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "permissions", "accounts"
   add_foreign_key "profiles", "accounts"
   add_foreign_key "profiles", "users"
   add_foreign_key "refresh_tokens", "users"
+  add_foreign_key "roles", "accounts"
   add_foreign_key "roles_permissions", "permissions"
   add_foreign_key "roles_permissions", "roles"
   add_foreign_key "tasks", "accounts"

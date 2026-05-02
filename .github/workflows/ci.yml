@@ -3,12 +3,11 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,30 +18,54 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Run RuboCop
-        run: bundle exec rubocop --cache false
+      - name: Lint code for consistent style
+        run: bundle exec rubocop -f github
 
-      - name: Run Brakeman
-        run: bin/brakeman --no-pager
-
-  rspec:
+  security:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Security scan with Brakeman
+        run: bundle exec brakeman --no-pager
+
+      - name: Audit dependencies
+        run: bundle exec bundler-audit check --update
+        continue-on-error: true
+
+  test:
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: rocketpass_test
         ports:
           - 5432:5432
-        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
       redis:
         image: redis:7
         ports:
           - 6379:6379
-        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Install packages
@@ -57,16 +80,25 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Prepare database
+      - name: Setup database
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/rocketpass_starterpack_rails_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/rocketpass_test
           REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:prepare
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:schema:load
 
-      - name: Run RSpec
+      - name: Run RSpec tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/rocketpass_starterpack_rails_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/rocketpass_test
           REDIS_URL: redis://localhost:6379/0
-        run: bundle exec rspec
+        run: bundle exec rspec --format documentation
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
